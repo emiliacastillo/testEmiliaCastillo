@@ -1,0 +1,119 @@
+<div class="main-content">
+  <div class="row">
+    <div class="col-md-6 mt-3 ">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-category">All Persons List</h5>
+          <h4 class="card-title"> CLients Stats</h4>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table">
+              <thead class=" text-primary">
+                <th>
+                  Name
+                </th>
+                <th>
+                  Found Date
+                </th>
+                <th>
+                  Due Date
+                </th>
+                <th>
+                  Pay Days
+                </th>
+                <th>
+                  Pay Span
+                </th>
+                <th>
+                  Direct Deposit
+                </th>
+              </thead>
+              <tbody>
+                <tr *ngFor="let person of people">
+                  <td>{{ person.name }}</td>
+                  <td>{{ person.fundDate }}</td>
+                  <td>{{ person.dueDate }}</td>
+                  <td>{{ person.payDays }}</td>
+                  <td>{{ person.payspan }}</td>
+                  <td>
+                    <div class="form-check">
+                      <label class="form-check-label">
+                        <input class="form-check-input" type="checkbox" [checked]="person.directDeposit"
+                          value="{{ person.directDeposit}}">
+                        <span class="form-check-sign"></span>
+                      </label>
+                    </div>
+                  </td>
+                  <td><button class="btn" title="delete person" (click)="delete(person)" aria-hidden="true"><i class="glyphicon glyphicon-remove"></i></button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 mt-3">
+      <div class="row "><app-user-profile [people]="people" [holidays]="holidays"></app-user-profile></div>
+      <div class="row mt-3">
+        <div class="panel-header panel-header-sm">
+        </div>
+        <div class="main-content">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="card card-user">
+                <div class="card-header">
+                  <h4 class="card-title"> Holidays</h4>
+                </div>
+                <div class="card-body">
+                  <form [formGroup]="checkoutForm" (ngSubmit)="onSubmit()">
+                    <div class="row">
+                      <div class="col-md-5 pr-1">
+                        <div class="form-group">
+                          <label>Name</label>
+                          <input type="text" formControlName="name" class="form-control" placeholder="Name" value="">
+                        </div>
+                      </div>
+                      <div class="col-md-3 pl-1">
+                        <div class="form-group">
+                          <label>Date</label>
+                          <input name="date" formControlName="date" value="" type="date" class="form-control"
+                            placeholder="Date">
+                        </div>
+                      </div>
+                      <div class="col-md-3 pt-2 mt-4">
+                        <div>
+                          <button type="submit"> Save </button>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                  <div class="table-responsive">
+                    <table class="table">
+                      <thead class=" text-primary">
+                        <th>
+                          Name
+                        </th>
+                        <th>
+                          Date
+                        </th>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let holiday of holidays">
+                          <td>{{ holiday.name }}</td>
+                          <td>{{ holiday.date }}</td>
+                          <td><button class="btn" title="delete holiday" (click)="deleteholiday(holiday)"
+                              aria-hidden="true"><i class="glyphicon glyphicon-remove"></i></button></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

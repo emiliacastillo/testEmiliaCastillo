@@ -1,0 +1,75 @@
+<div class="panel-header panel-header-sm">
+</div>
+<div class="main-content">
+  <div class="row mt-10">
+    <div class="col-md-12">
+      <div class="card card-user">
+        <div class="card-header">
+          <h5 class="title">Pay Data</h5>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="checkoutForm" (ngSubmit)="onSubmit()">
+            <div class="row">
+              <div class="col-md-5 pr-1">
+                <div class="form-group">
+                  <label>Name</label>
+                  <input type="text" formControlName="name" class="form-control" placeholder="Name" value="">
+                </div>
+              </div>
+              
+              <div class="col-md-3 pl-1">
+                <div class="form-group">
+                  <label>Direct Deposit</label>
+                  <input class="form-control form-check-input" formControlName="directDeposit"
+                    placeholder="Direct Deposit" value="" type="checkbox" checked>
+                </div>
+              </div>
+              <div class="row mt-3">
+                <div class="col-md-3 pl-1">
+                  <div class="form-group">
+                    <label>Fund Date</label>
+                    <input name="fundDate" formControlName="fundDate" value="" type="date" class="form-control"
+                      placeholder="Fund Date" (change)="enablespan()">
+                  </div>
+                </div>
+                <div class="col-md-3 pl-1">
+                  <div class="form-group ">
+                    <label>Pay Span</label>
+                    <select class="form-control" formControlName="payspan" (change)="enabledays()">
+                      <option></option>
+                      <option *ngFor="let item of items">
+                        {{ item }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-3 pl-1">
+                  <div class="form-group">
+                    <label>Pay Days</label>
+                    <input name="payDays" formControlName="payDays" value="" type="date" class="form-control"
+                      placeholder="Pay Days" (change)="validdays()">
+                  </div>
+                </div>
+              </div>
+              <div class="row mt-3">
+                <div class="col-md-3 pl-1">
+                  <div class="form-group">
+                    <label>Due Date</label>
+                    <input type="text" formControlName="dueDate" class="form-control" placeholder="Due Date">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 pr-1 mt-3">
+                <div>
+                  <button class="btn-round" type="submit" > Save </button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
