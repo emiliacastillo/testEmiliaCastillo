@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { PersonService } from '../service/person/person.service';
-import { Holiday } from '../module/holyday';
+import { Holiday } from '../module/holiday';
 import { Person } from '../module/person';
 import { PaydatecalculatorService } from '../service/paydatecalculator/paydatecalculator.service';
 
@@ -24,7 +24,7 @@ export class UserProfileComponent implements OnInit {
       name: new FormControl('', Validators.required),
       salary: new FormControl('', Validators.required),
       fundDate: new FormControl('', Validators.required),
-      payDays: new FormControl({ value: '', disabled: true }, Validators.required),
+      payDay: new FormControl({ value: '', disabled: true }, Validators.required),
       dueDate: new FormControl({ value: '', disabled: true }),
       directDeposit: new FormControl(''),
       payspan: new FormControl({ value: '', disabled: true }, Validators.required)
@@ -41,8 +41,8 @@ export class UserProfileComponent implements OnInit {
 
   onSubmit() {
     
-    const e = new Date(this.checkoutForm.value.payDays)
-    if (this.items.includes(this.checkoutForm.value.payspan) && e <= this.final && this.checkoutForm.value.payDays >= this.checkoutForm.value.fundDate && this.checkoutForm.value.name!='') {
+    const e = new Date(this.checkoutForm.value.payDay)
+    if (this.items.includes(this.checkoutForm.value.payspan) && e <= this.final && this.checkoutForm.value.payDay >= this.checkoutForm.value.fundDate && this.checkoutForm.value.name!='') {
      
         this.person = this.checkoutForm.value;
         this.person.dueDate = this.duedate;
@@ -52,7 +52,7 @@ export class UserProfileComponent implements OnInit {
             this.people.push(this.person);
             this.checkoutForm.reset();
             this.person.dueDate = '';
-            this.checkoutForm.controls['payDays'].disable()
+            this.checkoutForm.controls['payDay'].disable()
             this.checkoutForm.controls['payspan'].disable()
           });
       
@@ -61,10 +61,17 @@ export class UserProfileComponent implements OnInit {
     }
   }
   payDatecalculated(): void {
-    var array: string[] = this.holidays.map((a) => {
-      return a.date;
+    var array: Date[] = this.holidays.map((a) => {
+      let day=new Date(a.date);
+      day.setDate(day.getDate() + 1);
+
+      return day;
     })
-    var date: Date = this.paydatecalculatorService.calculateDueDate(this.checkoutForm.value.fundDate, array, this.checkoutForm.value.payspan, this.checkoutForm.value.payDays, this.checkoutForm.value.directDeposit
+    let fundday=new Date(this.checkoutForm.value.fundDate);
+    fundday.setDate(fundday.getDate() + 1);
+    let payday=new Date(this.checkoutForm.value.payDay);
+    payday.setDate(fundday.getDate() + 1);
+    var date: Date = this.paydatecalculatorService.calculateDueDate(fundday, array, this.checkoutForm.value.payspan,payday , this.checkoutForm.value.directDeposit
     )
     let day = '' + date.getDate();
     let month = '' + (date.getMonth() + 1);
@@ -80,26 +87,26 @@ export class UserProfileComponent implements OnInit {
   }
   enablespan() {
     this.checkoutForm.controls['payspan'].enable();
-    this.checkoutForm.controls['payDays'].setValue('')
-    this.checkoutForm.controls['payDays'].disable()
+    this.checkoutForm.controls['payDay'].setValue('')
+    this.checkoutForm.controls['payDay'].disable()
     if (this.items.includes(this.checkoutForm.value.payspan)) {
-      this.checkoutForm.controls['payDays'].enable()
+      this.checkoutForm.controls['payDay'].enable()
       this.payDatecalculated();
     }
   }
   enabledays() {
     if (this.items.includes(this.checkoutForm.value.payspan)) {
-      this.checkoutForm.controls['payDays'].enable()
+      this.checkoutForm.controls['payDay'].enable()
       this.payDatecalculated();
     }
 
 
   }
   validdays() {
-    const e = new Date(this.checkoutForm.value.payDays)
-    if (e > this.final || this.checkoutForm.value.payDays < this.checkoutForm.value.fundDate) {
+    const e = new Date(this.checkoutForm.value.payDay)
+    if (e > this.final || this.checkoutForm.value.payDay < this.checkoutForm.value.fundDate) {
       alert('Pay day outsite')
-      this.checkoutForm.controls['payDays'].setValue('')
+      this.checkoutForm.controls['payDay'].setValue('')
 
     }
   }

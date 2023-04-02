@@ -3,7 +3,7 @@ import { HttpParams, HttpClient, HttpHeaders } from '@angular/common/http';
 import { Person } from '../module/person';
 import { PersonService } from '../service/person/person.service';
 import { PaydatecalculatorService } from '../service/paydatecalculator/paydatecalculator.service';
-import { Holiday } from '../module/holyday';
+import { Holiday } from '../module/holiday';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 @Component({
   selector: 'app-dashboard',
@@ -11,7 +11,6 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
   styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent implements OnInit {
-  edit: Boolean= false;
   people: Person[]=[];
   selectedPerson!: Person;
   holidays: Holiday[]=[];
@@ -42,14 +41,10 @@ export class DashboardComponent implements OnInit {
   }
 onSelect(person: Person): void {
   this.selectedPerson = person;
-  this.edit=true;
-}
+ }
 getHolidays(): void {
   this.paydatecalculatorService.getHolidays()
       .subscribe(holidays => this.holidays = holidays);
-}
-onadd(): void {
-   this.edit=false;
 }
 
 deleteholiday(holiday: Holiday): void {

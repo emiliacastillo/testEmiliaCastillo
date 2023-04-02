@@ -16,16 +16,16 @@ export class PersonService {
   getPeople(): Observable<Person[]> {
     return this.http.get<Person[]>(this.peopleUrl)
       .pipe(
-        map(proyectos=>
-          proyectos.map((proyecto) => {
+        map(el=>
+          el.map((element) => {
             return {
-              id:proyecto.id,
-              name: proyecto.name,
-              payDays:proyecto.payDays,
-              dueDate:proyecto.dueDate,
-              fundDate:proyecto.fundDate,
-              payspan:proyecto.payspan,
-              directDeposit:proyecto.directDeposit
+              id:element.id,
+              name: element.name,
+              payDay:element.payDay,
+              dueDate:element.dueDate,
+              fundDate:element.fundDate,
+              payspan:element.payspan,
+              directDeposit:element.directDeposit
             };
           }) 
         ),
@@ -42,14 +42,6 @@ export class PersonService {
         catchError(this.handleError<Person>('getPerson id=${id}'))
     );
   }
-  updatePerson(person: Person): Observable<any> {
-    const id = typeof person === 'number' ? person : person.id;
-    const url = `${this.peopleUrl}/${id}`;
-    return this.http.put(url, person, this.httpOptions).pipe(
-      tap(_ => this.log(`updated person id=${person.id}`)),
-      catchError(this.handleError<any>('updatePerson'))
-    );
-  }
   addPerson(person: Person): Observable<Person> {
     return this.http.post<Person>(this.peopleUrl, person, this.httpOptions).pipe(
       tap((newPerson: Person) => this.log(`added person w/ id=${newPerson.id} `)),
@@ -63,18 +55,6 @@ export class PersonService {
     return this.http.delete<Person>(url, this.httpOptions).pipe(
       tap(_ => this.log(`deleted person id=${id}`)),
       catchError(this.handleError<Person>('deletePerson'))
-    );
-  }
-  searchPeople(term: string): Observable<Person[]> {
-    if (!term.trim()) {
-      // if not search term, return empty person array.
-      return of([]);
-    }
-    return this.http.get<Person[]>(`${this.peopleUrl}/?name=${term}`).pipe(
-      tap(x => x.length ?
-         this.log(`found people matching "${term}"`) :
-         this.log(`no people matching "${term}"`)),
-      catchError(this.handleError<Person[]>('searchPeople', []))
     );
   }
   private handleError<T>(operation = 'operation', result?: T) {

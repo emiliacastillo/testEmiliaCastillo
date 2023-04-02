@@ -1,7 +1,7 @@
 export interface Person {
     id: number;
     name: string;
-    payDays: Date;
+    payDay: Date;
     dueDate: string;
     fundDate: Date;
     payspan: string;

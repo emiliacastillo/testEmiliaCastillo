@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { Holiday } from 'src/app/module/holyday';
+import { Holiday } from 'src/app/module/holiday';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError, map, tap } from 'rxjs/operators';
 import { join } from 'path';
@@ -9,13 +9,13 @@ import { join } from 'path';
   providedIn: 'root'
 })
 export class PaydatecalculatorService {
-  private fundDay!: Date;
+  private incrementDays: number=10;
   private paySpan!: string;
   private hasDirectDeposit!: boolean;
   private firstPayDay!: Date;
-  private fundMasDiez!: Date;
+  private newrange!: Date;
   private dueDateTemp!: Date;
-  private holiDays!: string[];
+  private holidays!: Date[];
   private looptype!: string;
   private url = 'https://my-json-server.typicode.com/emiliacastillo/testangular2/data';
 
@@ -29,18 +29,22 @@ export class PaydatecalculatorService {
   getHolidays(): Observable<Holiday[]> {
     return this.http.get<Holiday[]>(this.url)
       .pipe(
-        map(proyectos =>
-          proyectos.map((proyecto) => {
+        map(el =>
+          el.map((element) => {
             return {
-              id:proyecto.id,
-              name: proyecto.name,
-              date: proyecto.date
+              id:element.id,
+              name: element.name,
+              date: element.date
             };
           })
         ),
         tap(_ => this.log('fetched Holiday')),
         catchError(this.handleError<Holiday[]>('getHolidays', []))
       );
+  }
+  compareDates(){
+    const result=this.holidays.filter(word => this.dueDateTemp.toUTCString()==word.toUTCString());
+    return result.length>0? true: false;
   }
   firtspayDate(fundDayDate: Date, paySpan: string): any {
     let firstPayDay: Date;
@@ -56,7 +60,6 @@ export class PaydatecalculatorService {
     }
     if (paySpan === "Monthly") {
       firstPayDay = fundDayDate;
-      firstPayDay.setDate(firstPayDay.getDate() + 1);
       firstPayDay.setMonth(firstPayDay.getMonth() + 1);
       this.firstPayDay = firstPayDay;
 
@@ -89,9 +92,8 @@ export class PaydatecalculatorService {
     if (day.length < 2)
       day = '0' + day;
     const cad = [year, month, day].join('-');
-
-    if (!this.holiDays.includes(cad)) {
-      return this.isGreaterThan10();
+    if (!this.compareDates()) {
+      return this.isGreaterThan_newrange();
     }
     else {
       this.looptype = 'Reverse';
@@ -99,8 +101,8 @@ export class PaydatecalculatorService {
 
     }
   }
-  isGreaterThan10(): any {
-    if (this.dueDateTemp >= this.fundMasDiez) {
+  isGreaterThan_newrange(): any {
+    if (this.dueDateTemp >= this.newrange) {
       return this.dueDateTemp;
     }
     else {
@@ -118,20 +120,16 @@ export class PaydatecalculatorService {
       return this.increaseDay();
     }
   }
-  calculateDueDate(fundDay: string, holiDays: string[], paySpan: string, payDays: string, hasDirectDeposit: boolean): any {
-    let fundDayDate = new Date(fundDay);
-    let payDaysDate = new Date(payDays);
-    fundDayDate.setDate(fundDayDate.getDate() + 1).toLocaleString();
+  public calculateDueDate(fundDay: Date, holiDays: Date[], paySpan: string, payDay: Date, hasDirectDeposit: boolean): any {
+    let fundIncrementDays = new Date(fundDay);
+    fundIncrementDays.setDate(fundIncrementDays.getDate() + this.incrementDays);
 
-    let fundMasDiez = new Date(fundDayDate);
-    fundMasDiez.setDate(fundMasDiez.getDate() + 10).toLocaleString();
-
-    this.firtspayDate(fundDayDate, paySpan);
+    this.firtspayDate(fundDay, paySpan);
     this.dueDateTemp = new Date(this.firstPayDay);
     this.looptype = 'Forward';
     this.paySpan = paySpan;
-    this.fundMasDiez = fundMasDiez;
-    this.holiDays = holiDays;
+    this.newrange = fundIncrementDays;
+    this.holidays = holiDays;
     this.hasDirectDeposit = hasDirectDeposit;
     return this.isDeposit();
 
